@@ -11,7 +11,7 @@ spl_autoload_register(function($className) {
 });
 
 // Настройки
-$applicationHelper = Helpers\ApplicationHelper::instance();
+$applicationHelper = Base\ApplicationHelper::instance();
 $applicationHelper->init();
 
 // Фронт-контроллер

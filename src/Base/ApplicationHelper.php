@@ -1,13 +1,12 @@
 <?php
 
-namespace Helpers;
+namespace Base;
 
 class ApplicationHelper
 {
 	static protected $instance = null;
 
 	protected $configFile = __DIR__ . '/../../config.json';
-	protected $config;
 
 	static public function instance()
 	{
@@ -25,6 +24,10 @@ class ApplicationHelper
 
 	protected function fetchConfig()
 	{
-		$this->config = json_decode(file_get_contents($this->configFile));
+		$config = json_decode(file_get_contents($this->configFile));
+
+		if (isset($config->database)) {
+			ApplicationRegistry::instance()->set('database', $config->database);
+		}
 	}
 }

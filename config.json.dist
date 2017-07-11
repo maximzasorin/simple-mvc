@@ -1,5 +1,6 @@
 {
 	"database": {
+		"driver": "",
 		"host": "",
 		"database": "",
 		"username": "",
