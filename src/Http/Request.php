@@ -4,7 +4,7 @@ namespace Http;
 
 class Request
 {
-	protected $request = array();
+	protected $request = [];
 
 	public function __construct()
 	{

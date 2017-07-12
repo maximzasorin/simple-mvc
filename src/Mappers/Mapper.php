@@ -3,10 +3,15 @@
 namespace Mappers;
 
 use Base\ApplicationRegistry;
+use Models\Model;
 
 abstract class Mapper
 {
 	protected static $pdo;
+
+	protected $selectStatement;
+	protected $insertStatement;
+	protected $updateStatement;
 
 	public function __construct()
 	{
@@ -22,10 +27,35 @@ abstract class Mapper
 		}
 	}
 
-	public function find($id)
+	public function createObject(array $array)
 	{
-
+		return $this->doCreateObject($array);
 	}
 
-	// abstract protected function select();
+	public function find($id)
+	{
+		$this->selectStatement->execute(array($id));
+		$array = $this->selectStatement->fetch();
+		$this->selectStatement->closeCursor();
+
+		if (!is_array($array) || !isset($array[$id])) {
+			return null;
+		}
+
+		return $this->createObject($array);
+	}
+
+	public function insert(Model $model)
+	{
+		$this->doInsert($model);
+	}
+
+	public function update(Model $model)
+	{
+		$this->doUpdate($model);
+	}
+
+	protected abstract function doCreateObject(array $array);
+	protected abstract function doInsert(Model $model);
+	protected abstract function doUpdate(Model $model);
 }

@@ -5,7 +5,7 @@ namespace Models;
 class Product extends Model
 {
 	protected $name;
-	protected $images;
+	protected $createdAt;
 
 	public function __construct()
 	{
@@ -17,8 +17,26 @@ class Product extends Model
 		return $this->name;
 	}
 
-	public function getImages()
+	public function setName($name)
 	{
-		return $this->images;
+		$this->name = $name;
+	}
+
+	public function getCreatedAt()
+	{
+		return $this->createdAt;
+	}
+
+	public function setCreatedAt($createdAt)
+	{
+		$this->createdAt = $createdAt;
+	}
+
+	public function transform()
+	{
+		return [
+			'name' => $this->getName(),
+			'created_at' => $this->getCreatedAt(),
+		];
 	}
 }
