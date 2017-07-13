@@ -34,7 +34,11 @@ class ProductMapper extends Mapper
 	{
 		$this->findAllStatement->execute();
 
-		return $this->getCollection($this->findAllStatement->fetchAll(\PDO::FETCH_ASSOC));
+		$collection = $this->getCollection($this->findAllStatement->fetchAll(\PDO::FETCH_ASSOC));
+
+		// var_dump($collection);
+
+		return $collection->getGenerator();
 	}
 
 	protected function getCollection(array $raw)
