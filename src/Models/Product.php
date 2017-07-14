@@ -7,11 +7,6 @@ class Product extends Model
 	protected $name;
 	protected $createdAt;
 
-	public function __construct()
-	{
-		
-	}
-
 	public function getName()
 	{
 		return $this->name;

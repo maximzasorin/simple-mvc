@@ -3,6 +3,7 @@
 namespace Mappers;
 
 use Base\ApplicationRegistry;
+use Models\ObjectWatcher;
 use Models\Model;
 
 abstract class Mapper
@@ -29,11 +30,27 @@ abstract class Mapper
 
 	public function createObject(array $array)
 	{
-		return $this->doCreateObject($array);
+		$model = $this->getFromWatcher($array['id']);
+
+		if ($model) {
+			return $model;
+		}
+
+		$model = $this->doCreateObject($array);
+
+		$this->addToWatcher($model);
+
+		return $model;
 	}
 
 	public function find($id)
 	{
+		$model = $this->getFromWatcher($id);
+
+		if ($model) {
+			return $model;
+		}
+
 		$this->selectStatement->execute(array($id));
 		$array = $this->selectStatement->fetch();
 		$this->selectStatement->closeCursor();
@@ -48,12 +65,25 @@ abstract class Mapper
 	public function insert(Model $model)
 	{
 		$this->doInsert($model);
+		$this->addToWatcher($model);
 	}
 
 	public function update(Model $model)
 	{
 		$this->doUpdate($model);
 	}
+
+	protected function getFromWatcher($id)
+	{
+		return ObjectWatcher::get($this->targetClass(), $id);
+	}
+
+	protected function addToWatcher(Model $model)
+	{
+		ObjectWatcher::add($model);
+	}
+
+	protected abstract function targetClass();
 
 	protected abstract function doCreateObject(array $array);
 	protected abstract function doInsert(Model $model);

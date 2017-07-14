@@ -36,9 +36,12 @@ class ProductMapper extends Mapper
 
 		$collection = $this->getCollection($this->findAllStatement->fetchAll(\PDO::FETCH_ASSOC));
 
-		// var_dump($collection);
-
 		return $collection->getGenerator();
+	}
+
+	public function targetClass()
+	{
+		return 'Models\Product';
 	}
 
 	protected function getCollection(array $raw)
@@ -48,7 +51,7 @@ class ProductMapper extends Mapper
 
 	protected function doCreateObject(array $array)
 	{
-		$product = new Product($array[$id]);
+		$product = new Product($array['id']);
 		$product->setName($array['name']);
 		$product->setCreatedAt($array['created_at']);
 
@@ -61,7 +64,7 @@ class ProductMapper extends Mapper
 		$product->setId(self::$pdo->lastInsertId());
 	}
 
-	public function doUpdate(Model $model)
+	protected function doUpdate(Model $model)
 	{
 		$this->updateStatement->execute([
 			$product->getName(),

@@ -13,6 +13,8 @@ class Product extends Command
 		$productMapper = new ProductMapper;
 		$product = $productMapper->find($request->getProperty('id'));
 
+		var_dump($productMapper->targetClass());
+
 		print json_encode($product->transform());
 	}
 }
