@@ -2,13 +2,19 @@
 
 namespace Models;
 
+use Base\HelperFactory;
+
 class Model
 {
 	protected $id;
 
 	public function __construct($id = null)
 	{
-		$this->id = $id;
+		if (!$id) {
+			$this->markNew();
+		} else {
+			$this->id = $id;
+		}
 	}
 
 	public function getId()
@@ -16,12 +22,55 @@ class Model
 		return $this->id;
 	}
 
-	protected static function getCollection($type)
+	public function setId($id)
 	{
-		return [];
+		$this->id = $id;
 	}
 
-	protected function collection()
+	public function markNew()
+	{
+		ObjectWatcher::addNew($this);
+	}
+
+	public function markDirty()
+	{
+		ObjectWatcher::addDirty($this);
+	}
+
+	public function markClean()
+	{
+		ObjectWatcher::addClean($this);
+	}
+
+	public function markDelete()
+	{
+		ObjectWatcher::addDelete($this);
+	}
+
+	static public function getFinder($type = null)
+	{
+		if (!$type) {
+			return HelperFactory::getFinder(get_called_class());
+		}
+
+		return HelperFactory::getFinder($type);
+	}
+
+	public function finder()
+	{
+		return self::getFinder(get_class($this));
+	}
+
+	protected static function getCollection($type = null)
+	{
+		if (!$type) {
+			return HelperFactory::getCollection(get_called_class());
+		}
+
+		return HelperFactory::getCollection($type);
+	}
+
+	public function collection()
 	{
 		return self::getCollection(get_class($this));
 	}

@@ -15,6 +15,7 @@ class Product extends Model
 	public function setName($name)
 	{
 		$this->name = $name;
+		$this->markDirty();
 	}
 
 	public function getCreatedAt()
@@ -25,6 +26,7 @@ class Product extends Model
 	public function setCreatedAt($createdAt)
 	{
 		$this->createdAt = $createdAt;
+		$this->markDirty();
 	}
 
 	public function transform()

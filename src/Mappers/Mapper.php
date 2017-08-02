@@ -37,6 +37,7 @@ abstract class Mapper
 		}
 
 		$model = $this->doCreateObject($array);
+		$model->markClean();
 
 		$this->addToWatcher($model);
 
@@ -55,7 +56,7 @@ abstract class Mapper
 		$array = $this->selectStatement->fetch();
 		$this->selectStatement->closeCursor();
 
-		if (!is_array($array) || !isset($array[$id])) {
+		if (!is_array($array) || !isset($array['id'])) {
 			return null;
 		}
 
@@ -66,11 +67,23 @@ abstract class Mapper
 	{
 		$this->doInsert($model);
 		$this->addToWatcher($model);
+
+		var_dump('insert model');
 	}
 
 	public function update(Model $model)
 	{
 		$this->doUpdate($model);
+
+		var_dump('update model');
+	}
+
+	public function delete(Model $model)
+	{
+		$this->doDelete($model);
+		$this->deleteFromObjectWatcher($model);
+
+		var_dump('delete model');
 	}
 
 	protected function getFromWatcher($id)
@@ -83,9 +96,15 @@ abstract class Mapper
 		ObjectWatcher::add($model);
 	}
 
+	protected function deleteFromObjectWatcher(Model $model)
+	{
+		ObjectWatcher::delete($model);
+	}
+
 	protected abstract function targetClass();
 
 	protected abstract function doCreateObject(array $array);
 	protected abstract function doInsert(Model $model);
 	protected abstract function doUpdate(Model $model);
+	protected abstract function doDelete(Model $model);
 }

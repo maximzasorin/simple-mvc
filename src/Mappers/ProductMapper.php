@@ -25,6 +25,10 @@ class ProductMapper extends Mapper
 			'INSERT INTO products (name) VALUES (?)'
 		);
 
+		$this->deleteStatement = self::$pdo->prepare(
+			'DELETE FROM products WHERE id = ?'
+		);
+
 		$this->findAllStatement = self::$pdo->prepare(
 			'SELECT * FROM products'
 		);
@@ -58,18 +62,23 @@ class ProductMapper extends Mapper
 		return $product;
 	}
 
-	protected function doInsert(Model $model)
+	protected function doInsert(Model $product)
 	{
 		$this->insertStatement->execute([$product->getName()]);
 		$product->setId(self::$pdo->lastInsertId());
 	}
 
-	protected function doUpdate(Model $model)
+	protected function doUpdate(Model $product)
 	{
 		$this->updateStatement->execute([
 			$product->getName(),
 			$product->getId(),
 			$product->getId()
 		]);
+	}
+
+	protected function doDelete(Model $product)
+	{
+		$this->deleteStatement->execute([$product->getId()]);
 	}
 }
