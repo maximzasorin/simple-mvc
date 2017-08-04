@@ -4,17 +4,20 @@ namespace Mappers;
 
 use Models\Model;
 use Models\Product;
+use Models\Variation;
 
 class ProductMapper extends Mapper
 {
-	protected $findAllStatement;
-
 	public function __construct()
 	{
 		parent::__construct();
 
-		$this->selectStatement = self::$pdo->prepare(
+		$this->findStatement = self::$pdo->prepare(
 			'SELECT * FROM products WHERE id = ?'
+		);
+
+		$this->findAllStatement = self::$pdo->prepare(
+			'SELECT * FROM products'
 		);
 
 		$this->updateStatement = self::$pdo->prepare(
@@ -28,19 +31,6 @@ class ProductMapper extends Mapper
 		$this->deleteStatement = self::$pdo->prepare(
 			'DELETE FROM products WHERE id = ?'
 		);
-
-		$this->findAllStatement = self::$pdo->prepare(
-			'SELECT * FROM products'
-		);
-	}
-
-	public function findAll()
-	{
-		$this->findAllStatement->execute();
-
-		$collection = $this->getCollection($this->findAllStatement->fetchAll(\PDO::FETCH_ASSOC));
-
-		return $collection->getGenerator();
 	}
 
 	public function targetClass()
@@ -58,6 +48,11 @@ class ProductMapper extends Mapper
 		$product = new Product($array['id']);
 		$product->setName($array['name']);
 		$product->setCreatedAt($array['created_at']);
+
+		$variationMapper = new VariationMapper;
+		$variationCollection = $variationMapper->findByProductId($array['id']);
+
+		$product->setVariations($variationCollection);
 
 		return $product;
 	}

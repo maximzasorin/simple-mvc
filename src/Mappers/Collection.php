@@ -2,6 +2,8 @@
 
 namespace Mappers;
 
+use Models\Model;
+
 abstract class Collection
 {
 	protected $mapper;
@@ -24,9 +26,32 @@ abstract class Collection
 
 	public function getGenerator()
 	{
+		$this->notifyAccess();
+
 		for ($index = 0; $index < $this->total; $index++) {
 			yield $this->getRow($index);
 		}
+	}
+
+	public function add(Model $model)
+	{
+		$class = $this->targetClass();
+
+		if (!($model instanceof $class)) {
+			throw \Exception("Model not instance of {$class}");
+		}
+
+		$this->notifyAccess();
+		$this->objects[$this->total] = $object;
+		$this->total++;
+	}
+
+	abstract public function targetClass();
+
+	protected function notifyAccess()
+	{
+		// Метод оставлен пустым и может переопределяться в потомках
+		// для отложенного обращения к БД
 	}
 
 	protected function getRow($index)

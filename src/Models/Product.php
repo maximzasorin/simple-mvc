@@ -5,6 +5,7 @@ namespace Models;
 class Product extends Model
 {
 	protected $name;
+	protected $variations;
 	protected $createdAt;
 
 	public function getName()
@@ -29,10 +30,27 @@ class Product extends Model
 		$this->markDirty();
 	}
 
+	public function getVariations()
+	{
+		return $this->variations;
+	}
+
+	public function setVariations($variations)
+	{
+		$this->variations = $variations;
+	}
+
 	public function transform()
 	{
+		$variations = [];
+		foreach ($this->getVariations()->getGenerator() as $variation) {
+			$variations[] = $variation->transform();
+		}
+
 		return [
+			'id' => $this->getId(),
 			'name' => $this->getName(),
+			'variations' => $variations,
 			'created_at' => $this->getCreatedAt(),
 		];
 	}

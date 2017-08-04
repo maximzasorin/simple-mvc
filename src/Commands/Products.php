@@ -14,7 +14,7 @@ class Products extends Command
 		$products = $productMapper->findAll();
 
 		$tranformed = [];
-		foreach ($products as $product) {
+		foreach ($products->getGenerator() as $product) {
 			$tranformed[] = $product->transform();
 		}
 

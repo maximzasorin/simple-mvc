@@ -10,9 +10,10 @@ abstract class Mapper
 {
 	protected static $pdo;
 
-	protected $selectStatement;
+	protected $findStatement;
 	protected $insertStatement;
 	protected $updateStatement;
+	protected $findAllStatemend;
 
 	public function __construct()
 	{
@@ -52,9 +53,9 @@ abstract class Mapper
 			return $model;
 		}
 
-		$this->selectStatement->execute(array($id));
-		$array = $this->selectStatement->fetch();
-		$this->selectStatement->closeCursor();
+		$this->findStatement->execute(array($id));
+		$array = $this->findStatement->fetch();
+		$this->findStatement->closeCursor();
 
 		if (!is_array($array) || !isset($array['id'])) {
 			return null;
@@ -63,27 +64,28 @@ abstract class Mapper
 		return $this->createObject($array);
 	}
 
+	public function findAll()
+	{
+		$this->findAllStatement->execute();
+
+		return $this->getCollection($this->findAllStatement->fetchAll(\PDO::FETCH_ASSOC));
+	}
+
 	public function insert(Model $model)
 	{
 		$this->doInsert($model);
 		$this->addToWatcher($model);
-
-		var_dump('insert model');
 	}
 
 	public function update(Model $model)
 	{
 		$this->doUpdate($model);
-
-		var_dump('update model');
 	}
 
 	public function delete(Model $model)
 	{
 		$this->doDelete($model);
 		$this->deleteFromObjectWatcher($model);
-
-		var_dump('delete model');
 	}
 
 	protected function getFromWatcher($id)
