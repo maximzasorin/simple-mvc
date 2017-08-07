@@ -14,7 +14,10 @@ class UpdateProduct extends Command
 	{
 		$productMapper = new ProductMapper;
 		$product = $productMapper->find($request->getProperty('id'));
-		$product->setName('Updated product');
+
+		if ($product) {
+			$product->setName('Updated product');
+		}
 
 		ObjectWatcher::instance()->performOperations();
 	}

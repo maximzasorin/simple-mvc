@@ -3,12 +3,13 @@
 namespace Mappers;
 
 use Base\ApplicationRegistry;
-use Models\ObjectWatcher;
 use Models\Model;
 
 abstract class Mapper
 {
 	protected static $pdo;
+
+	protected $persistenceFactory;
 
 	protected $findStatement;
 	protected $insertStatement;
@@ -29,25 +30,9 @@ abstract class Mapper
 		}
 	}
 
-	public function createObject(array $array)
-	{
-		$model = $this->getFromWatcher($array['id']);
-
-		if ($model) {
-			return $model;
-		}
-
-		$model = $this->doCreateObject($array);
-		$model->markClean();
-
-		$this->addToWatcher($model);
-
-		return $model;
-	}
-
 	public function find($id)
 	{
-		$model = $this->getFromWatcher($id);
+		$model = $this->persistenceFactory->getModelFactory()->getFromWatcher($id);
 
 		if ($model) {
 			return $model;
@@ -61,7 +46,7 @@ abstract class Mapper
 			return null;
 		}
 
-		return $this->createObject($array);
+		return $this->persistenceFactory->getModelFactory()->createObject($array);
 	}
 
 	public function findAll()
@@ -74,7 +59,7 @@ abstract class Mapper
 	public function insert(Model $model)
 	{
 		$this->doInsert($model);
-		$this->addToWatcher($model);
+		$this->persistenceFactory->getModelFactory()->addToWatcher($model);
 	}
 
 	public function update(Model $model)
@@ -85,27 +70,9 @@ abstract class Mapper
 	public function delete(Model $model)
 	{
 		$this->doDelete($model);
-		$this->deleteFromObjectWatcher($model);
+		$this->persistenceFactory->getModelFactory()->deleteFromWatcher($model);
 	}
 
-	protected function getFromWatcher($id)
-	{
-		return ObjectWatcher::get($this->targetClass(), $id);
-	}
-
-	protected function addToWatcher(Model $model)
-	{
-		ObjectWatcher::add($model);
-	}
-
-	protected function deleteFromObjectWatcher(Model $model)
-	{
-		ObjectWatcher::delete($model);
-	}
-
-	protected abstract function targetClass();
-
-	protected abstract function doCreateObject(array $array);
 	protected abstract function doInsert(Model $model);
 	protected abstract function doUpdate(Model $model);
 	protected abstract function doDelete(Model $model);

@@ -6,6 +6,6 @@ class VariationCollection extends Collection
 {
 	public function targetClass()
 	{
-		return 'Models\Variation';
+		return \Models\Variation::class;
 	}
 }

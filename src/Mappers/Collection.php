@@ -6,7 +6,7 @@ use Models\Model;
 
 abstract class Collection
 {
-	protected $mapper;
+	protected $modelFactory;
 	protected $total = 0;
 	protected $raw = [];
 
@@ -14,14 +14,14 @@ abstract class Collection
 	protected $pointer = 0;
 	protected $objects = [];
 
-	public function __construct(array $raw = null, Mapper $mapper = null)
+	public function __construct(array $raw = null, ModelFactory $modelFactory = null)
 	{
-		if ($raw && $mapper) {
+		if ($raw && $modelFactory) {
 			$this->raw = $raw;
 			$this->total = count($raw);
 		}
 
-		$this->mapper = $mapper;
+		$this->modelFactory = $modelFactory;
 	}
 
 	public function getGenerator()
@@ -61,7 +61,7 @@ abstract class Collection
 		}
 
 		if (isset($this->raw[$index])) {
-			$this->objects[$index] = $this->mapper->createObject($this->raw[$index]);
+			$this->objects[$index] = $this->modelFactory->createObject($this->raw[$index]);
 
 			return $this->objects[$index];
 		}

@@ -13,6 +13,12 @@ class Product extends Command
 		$productMapper = new ProductMapper;
 		$product = $productMapper->find($request->getProperty('id'));
 
-		print json_encode($product->transform());
+		if ($product) {
+			$json = json_encode($product->transform());
+		} else {
+			$json = '{}';
+		}
+
+		print $json;
 	}
 }

@@ -6,6 +6,6 @@ class ProductCollection extends Collection
 {
 	public function targetClass()
 	{
-		return 'Models\Product';
+		return \Models\Product::class;
 	}
 }

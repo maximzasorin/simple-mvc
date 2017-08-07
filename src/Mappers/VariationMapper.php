@@ -3,8 +3,6 @@
 namespace Mappers;
 
 use Models\Model;
-use Models\Product;
-use Models\Variation;
 
 class VariationMapper extends Mapper
 {
@@ -37,31 +35,18 @@ class VariationMapper extends Mapper
 		$this->findByProductIdStatement = self::$pdo->prepare(
 			'SELECT * FROM variations WHERE product_id = ?'
 		);
+
+		$this->persistenceFactory = new VariationPersistenceFactory;
 	}
 
 	public function findByProductId($productId)
 	{
-		return new DefferedVariationCollection($this, $this->findByProductIdStatement, [$productId]);
-	}
-
-	public function targetClass()
-	{
-		return 'Models\Variation';
+		return new DefferedVariationCollection($this->persistenceFactory->getModelFactory(), $this->findByProductIdStatement, [$productId]);
 	}
 
 	protected function getCollection(array $raw)
 	{
-		return new VariationCollection($raw, $this);
-	}
-
-	protected function doCreateObject(array $array)
-	{
-		$variation = new Variation($array['id']);
-		$variation->setName($array['name']);
-		$variation->setPrice($array['price']);
-		$variation->setCreatedAt($array['created_at']);
-
-		return $variation;
+		return $this->persistenceFactory->getCollection($raw);
 	}
 
 	protected function doInsert(Model $variation)

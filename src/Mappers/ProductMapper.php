@@ -3,8 +3,6 @@
 namespace Mappers;
 
 use Models\Model;
-use Models\Product;
-use Models\Variation;
 
 class ProductMapper extends Mapper
 {
@@ -31,30 +29,13 @@ class ProductMapper extends Mapper
 		$this->deleteStatement = self::$pdo->prepare(
 			'DELETE FROM products WHERE id = ?'
 		);
-	}
 
-	public function targetClass()
-	{
-		return 'Models\Product';
+		$this->persistenceFactory = new ProductPersistenceFactory;
 	}
 
 	protected function getCollection(array $raw)
 	{
-		return new ProductCollection($raw, $this);
-	}
-
-	protected function doCreateObject(array $array)
-	{
-		$product = new Product($array['id']);
-		$product->setName($array['name']);
-		$product->setCreatedAt($array['created_at']);
-
-		$variationMapper = new VariationMapper;
-		$variationCollection = $variationMapper->findByProductId($array['id']);
-
-		$product->setVariations($variationCollection);
-
-		return $product;
+		return $this->persistenceFactory->getCollection($raw);
 	}
 
 	protected function doInsert(Model $product)

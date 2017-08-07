@@ -8,9 +8,9 @@ class DefferedVariationCollection extends VariationCollection
 	protected $array;
 	protected $run = false;
 
-	public function __construct(Mapper $mapper, \PDOStatement $statement, array $array)
+	public function __construct(ModelFactory $modelFactory, \PDOStatement $statement, array $array)
 	{
-		parent::__construct(null, $mapper);
+		parent::__construct(null, $modelFactory);
 
 		$this->statement = $statement;
 		$this->array = $array;
