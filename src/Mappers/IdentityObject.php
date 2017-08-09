@@ -68,10 +68,10 @@ class IdentityObject
 	// 	return $this->fields;
 	// }
 
-	// public function getObjectFields()
-	// {
-	// 	return $this->objectFields;
-	// }
+	public function getObjectFields()
+	{
+		return $this->objectFields;
+	}
 
 	public function getComps()
 	{
@@ -84,7 +84,7 @@ class IdentityObject
 		return $comps;
 	}
 
-	protected function isVoid()
+	public function isVoid()
 	{
 		return empty($this->fields);
 	}
