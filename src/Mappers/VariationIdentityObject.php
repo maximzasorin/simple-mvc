@@ -7,7 +7,7 @@ class VariationIdentityObject extends IdentityObject
     public function __construct($fieldName = null)
     {
         parent::__construct($fieldName, array(
-        	'name', 'price', 'created_at'
+        	'id', 'name', 'price', 'product_id', 'created_at'
         ));
     }
 }

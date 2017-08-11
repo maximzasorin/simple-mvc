@@ -7,28 +7,12 @@ use Models\Model;
 
 abstract class Mapper
 {
-	protected static $pdo;
-
 	protected $persistenceFactory;
 
 	protected $findStatement;
 	protected $insertStatement;
 	protected $updateStatement;
 	protected $findAllStatemend;
-
-	public function __construct()
-	{
-		if (!isset(self::$pdo)) {
-			$config = ApplicationRegistry::instance()->get('database');
-			
-			$dsn = $config->driver . ':host=' . $config->host . ';dbname=' . $config->database;
-			$username = $config->username;
-			$password = $config->password;
-
-			self::$pdo = new \PDO($dsn, $username, $password);
-			self::$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-		}
-	}
 
 	public function find($id)
 	{
@@ -38,33 +22,36 @@ abstract class Mapper
 			return $model;
 		}
 
-		$this->findStatement->execute(array($id));
-		$array = $this->findStatement->fetch();
-		$this->findStatement->closeCursor();
+		$identityObject = $this->persistenceFactory->getIdentityObject();
+		$identityObject
+			->field('id')
+			->eq($id);
 
-		if (!is_array($array) || !isset($array['id'])) {
-			return null;
-		}
+		$domainObjectAssembler = new DomainObjectAssembler($this->persistenceFactory);
 
-		return $this->persistenceFactory->getModelFactory()->createObject($array);
+		return $domainObjectAssembler->findOne($identityObject);
 	}
 
 	public function findAll()
 	{
-		$this->findAllStatement->execute();
+		$identityObject = $this->persistenceFactory->getIdentityObject();
+		$domainObjectAssembler = new DomainObjectAssembler($this->persistenceFactory);
 
-		return $this->getCollection($this->findAllStatement->fetchAll(\PDO::FETCH_ASSOC));
+		return $domainObjectAssembler->find($this->persistenceFactory->getIdentityObject());
 	}
 
 	public function insert(Model $model)
 	{
-		$this->doInsert($model);
+		$domainObjectAssembler = new DomainObjectAssembler($this->persistenceFactory);
+		$domainObjectAssembler->insert($model);
+
 		$this->persistenceFactory->getModelFactory()->addToWatcher($model);
 	}
 
 	public function update(Model $model)
 	{
-		$this->doUpdate($model);
+		$domainObjectAssembler = new DomainObjectAssembler($this->persistenceFactory);
+		$domainObjectAssembler->insert($model);
 	}
 
 	public function delete(Model $model)
@@ -72,8 +59,4 @@ abstract class Mapper
 		$this->doDelete($model);
 		$this->persistenceFactory->getModelFactory()->deleteFromWatcher($model);
 	}
-
-	protected abstract function doInsert(Model $model);
-	protected abstract function doUpdate(Model $model);
-	protected abstract function doDelete(Model $model);
 }

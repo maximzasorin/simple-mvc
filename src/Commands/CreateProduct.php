@@ -16,7 +16,7 @@ class CreateProduct extends Command
 		$product->setName('New product');
 		$product->setCreatedAt(time());
 
-		// ObjectWatcher::instance()->performOperations();
+		ObjectWatcher::instance()->performOperations();
 
 		var_dump($product->getId());
 	}

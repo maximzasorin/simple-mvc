@@ -14,7 +14,8 @@ abstract class UpdateFactory
 
     	if ($conditions) {
     		$query .= "UPDATE {$table} SET ";
-			$query .= implode(' = ?,', array_keys($fields));
+			$query .= implode(' = ?,', array_keys($fields)) . ' = ?';
+            $terms = array_merge($terms, array_values($fields));
 
 			$query .= ' WHERE ';
 			$c = [];
