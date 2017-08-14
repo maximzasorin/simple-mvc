@@ -9,5 +9,6 @@ abstract class PersistenceFactory
 	abstract public function getModelFactory();
 	abstract public function getSelectionFactory();
 	abstract public function getUpdateFactory();
+	abstract public function getDeleteFactory();
 	abstract public function getIdentityObject();
 }

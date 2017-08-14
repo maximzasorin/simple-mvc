@@ -17,7 +17,7 @@ class DomainObjectAssembler
 
         if (!isset(self::$pdo)) {
             $config = ApplicationRegistry::instance()->get('database');
-            
+
             $dsn = $config->driver . ':host=' . $config->host . ';dbname=' . $config->database;
             $username = $config->username;
             $password = $config->password;
@@ -46,6 +46,7 @@ class DomainObjectAssembler
     public function find(IdentityObject $identityObject)
     {
         $raw = $this->findRaw($identityObject);
+
         return $this->persistenceFactory->getCollection($raw);
     }
 
@@ -74,5 +75,16 @@ class DomainObjectAssembler
         }
 
         $model->markClean();
+    }
+
+    public function delete(Model $model)
+    {
+        $deleteFactory = $this->persistenceFactory->getDeleteFactory();
+        list($query, $values) = $deleteFactory->newDelete($model);
+
+        if ($model->getId()) {
+            $statement = $this->getStatement($query);
+            $statement->execute($values);
+        }
     }
 }

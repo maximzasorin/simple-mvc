@@ -6,8 +6,6 @@ use Models\Model;
 
 class VariationMapper extends Mapper
 {
-	protected $findByProductIdStatement;
-
 	public function __construct()
 	{
 		$this->persistenceFactory = new VariationPersistenceFactory;

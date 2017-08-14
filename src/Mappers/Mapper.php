@@ -9,11 +9,6 @@ abstract class Mapper
 {
 	protected $persistenceFactory;
 
-	protected $findStatement;
-	protected $insertStatement;
-	protected $updateStatement;
-	protected $findAllStatemend;
-
 	public function find($id)
 	{
 		$model = $this->persistenceFactory->getModelFactory()->getFromWatcher($id);
@@ -56,7 +51,9 @@ abstract class Mapper
 
 	public function delete(Model $model)
 	{
-		$this->doDelete($model);
+		$domainObjectAssembler = new DomainObjectAssembler($this->persistenceFactory);
+		$domainObjectAssembler->delete($model);
+
 		$this->persistenceFactory->getModelFactory()->deleteFromWatcher($model);
 	}
 }

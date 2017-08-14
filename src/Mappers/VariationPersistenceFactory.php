@@ -29,6 +29,11 @@ class VariationPersistenceFactory extends PersistenceFactory
 		return new VariationUpdateFactory;
 	}
 
+	public function getDeleteFactory()
+	{
+		return new VariationDeleteFactory;
+	}
+
 	public function getIdentityObject()
 	{
 		return new VariationIdentityObject;

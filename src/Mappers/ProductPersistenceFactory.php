@@ -29,6 +29,11 @@ class ProductPersistenceFactory extends PersistenceFactory
 		return new ProductUpdateFactory;
 	}
 
+	public function getDeleteFactory()
+	{
+		return new ProductDeleteFactory;
+	}
+
 	public function getIdentityObject()
 	{
 		return new ProductIdentityObject;
